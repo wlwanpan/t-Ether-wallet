@@ -1,0 +1,8 @@
+{
+  "expoServerPort": 19000,
+  "expoServerNgrokUrl": "https://6y-yj8.wlwanpan.tetherwallet.exp.direct",
+  "packagerNgrokUrl": "https://packager.6y-yj8.wlwanpan.tetherwallet.exp.direct",
+  "ngrokPid": 29880,
+  "packagerPort": 19002,
+  "packagerPid": 29855
+}
