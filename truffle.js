@@ -2,14 +2,14 @@ module.exports = {
 	networks: {
 		development: {
 			protocol: 'http',
-			host: '192.168.0.155',
+			host: 'localhost',
 			port: 8545,
 			network_id: '*',
 		},
 		ropsten: {
 			protocol: 'https',
 			host: 'ropsten.infura.io',
-			key: 'BXQZYEH41BQ82FXN29XSZDWD5DXXZ369DN',
+			key: '',
 			port: 8545,
 			network_id: 3,
 		},

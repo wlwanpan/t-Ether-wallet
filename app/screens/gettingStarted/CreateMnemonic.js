@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Alert } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 import { default as RandomWords } from 'random-words'
 
@@ -8,14 +8,14 @@ import InputTextField from '../../components/InputTextField'
 import Header from '../../components/Header'
 import MenuButton from '../../components/MenuButton'
 
-export default class CreateWallet extends Component {
+export default class CreateMnemonic extends Component {
   constructor(props) {
     super(props)
     this.state = {
       mnemonicLimit: 12,
       mnemonic: ''
     }
-    this._onCreateHandler = this._onCreateHandler.bind(this)
+    this._validateMnemonic = this._validateMnemonic.bind(this)
     this._generateRandomMnemonic = this._generateRandomMnemonic.bind(this)
   }
   _generateRandomMnemonic() {
@@ -23,8 +23,29 @@ export default class CreateWallet extends Component {
       mnemonic: RandomWords(this.state.mnemonicLimit).join(' ')
     })
   }
-  _onCreateHandler() {
-    Actions.registerInfura({mnemonic: this.state.mnemonic})
+  _validateMnemonic() {
+    if (this.state.mnemonic.length == 0) {
+      Alert.alert(
+        'Mnemonic Error',
+        'Cannot be empty',
+        [
+          {text: 'Cancel', onPress: () => console.log('cancel dialog'), style: 'cancel'},
+        ],
+        { cancelable: false }
+      )
+    }
+    else {
+      this._onCreateHandler()
+    }
+  }
+  async _onCreateHandler() {
+    try {
+      await this.props.web3.aStoreMnemonic(this.state.mnemonic)
+      Actions.registerInfura()
+    }
+    catch(err) {
+      console.log(err)
+    }
   }
   render() {
     return(
@@ -37,7 +58,7 @@ export default class CreateWallet extends Component {
           onChangeText={(text) => this.setState({mnemonic: text})}
         />
         <MenuButton title='Generate Random Words' onPressHandler={this._generateRandomMnemonic}/>
-        <MenuButton title='Create Wallet' onPressHandler={this._onCreateHandler}/>
+        <MenuButton title='Create Wallet' onPressHandler={this._validateMnemonic}/>
       </ViewContainer>
     )
   }

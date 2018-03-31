@@ -1,7 +1,5 @@
 import React, { Component } from 'react'
-import { AsyncStorage, StyleSheet, View } from 'react-native'
 import { Actions } from 'react-native-router-flux'
-import { default as SHA256 } from 'crypto-js/sha256'
 import ViewContainer from '../../components/ViewContainer'
 import PinPad from '../../components/PinPad'
 
@@ -16,11 +14,9 @@ export default class CreatePinCode extends Component {
     this.onEnterHandler = this.onEnterHandler.bind(this)
   }
   async storePinCode(pin) {
-    var pinHash = SHA256(pin, { outputLength: 256 })
-    var pinHashToStr = pinHash.toString()
     try {
-      await AsyncStorage.setItem('@tEtherWallet:securityPinCodeHash', pinHashToStr)
-      Actions.createWallet({pin: pinHashToStr})
+      await this.props.web3.aStorePinCode(pin)
+      Actions.createMnemonic()
     }
     catch(err) {
       console.log(err)
@@ -50,7 +46,3 @@ export default class CreatePinCode extends Component {
     )
   }
 }
-
-const styles = StyleSheet.create({
-
-})
