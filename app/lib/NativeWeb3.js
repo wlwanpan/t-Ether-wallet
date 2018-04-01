@@ -16,7 +16,7 @@ export default class NativeWeb3 {
       let mnemonic = await AsyncStorage.getItem(this.mnemonicKey)
       let web3 = new Web3(new HDWalletProvider(mnemonic, `https://${_domain}.infura.io/${_token}`))
 
-      web3.eth.getBlockNumber((err, result) => err ? resolve(false) : resolve(true))
+      web3.eth.getCoinbase((err, result) => err ? resolve(false) : resolve(true))
     })
   }
 

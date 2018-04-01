@@ -2,7 +2,7 @@
   "expoServerPort": 19000,
   "expoServerNgrokUrl": "https://vb-vve.wlwanpan.tetherwallet.exp.direct",
   "packagerNgrokUrl": "https://packager.vb-vve.wlwanpan.tetherwallet.exp.direct",
-  "ngrokPid": 71905,
-  "packagerPort": 19003,
-  "packagerPid": 71875
+  "ngrokPid": 92819,
+  "packagerPort": 19002,
+  "packagerPid": 92790
 }
