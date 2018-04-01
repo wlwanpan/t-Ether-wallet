@@ -6,7 +6,7 @@ import { default as RandomWords } from 'random-words'
 import ViewContainer from '../../components/ViewContainer'
 import InputTextField from '../../components/InputTextField'
 import Header from '../../components/Header'
-import MenuButton from '../../components/MenuButton'
+import MenuButtons from '../../components/MenuButtons'
 
 export default class CreateMnemonic extends Component {
   constructor(props) {
@@ -25,14 +25,7 @@ export default class CreateMnemonic extends Component {
   }
   _validateMnemonic() {
     if (this.state.mnemonic.length == 0) {
-      Alert.alert(
-        'Mnemonic Error',
-        'Cannot be empty',
-        [
-          {text: 'Cancel', onPress: () => console.log('cancel dialog'), style: 'cancel'},
-        ],
-        { cancelable: false }
-      )
+      this.props.alert('Mnemonic cannot be empty.')
     }
     else {
       this._onCreateHandler()
@@ -52,13 +45,17 @@ export default class CreateMnemonic extends Component {
       <ViewContainer>
         <Header>{ this.state.mnemonic }</Header>
         <InputTextField
-          autoFocus={true}
+          autoFocus={false}
           placeholder={`Enter ${this.state.mnemonicLimit} Random Words`}
           value={this.state.mnemonic}
           onChangeText={(text) => this.setState({mnemonic: text})}
         />
-        <MenuButton title='Generate Random Words' onPressHandler={this._generateRandomMnemonic}/>
-        <MenuButton title='Create Wallet' onPressHandler={this._validateMnemonic}/>
+        <MenuButtons
+          buttons= {[
+            {key: 'Generate Random Words', action: this._generateRandomMnemonic},
+            {key: 'Create Wallet', action: this._validateMnemonic}
+          ]}
+        />
       </ViewContainer>
     )
   }

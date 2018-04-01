@@ -11,7 +11,7 @@ export default class CreatePinCode extends Component {
       pinLimit: 4,
       pin: undefined
     }
-    this.onEnterHandler = this.onEnterHandler.bind(this)
+    this._onEnterHandler = this._onEnterHandler.bind(this)
   }
   async storePinCode(pin) {
     try {
@@ -19,17 +19,28 @@ export default class CreatePinCode extends Component {
       Actions.createMnemonic()
     }
     catch(err) {
-      console.log(err)
+      this.props.alert(err)
     }
-    this.setState({ pin: undefined })
+    this.setState({
+      ...this.state,
+      pin: undefined
+    })
   }
-  onEnterHandler(pin) {
+  _onEnterHandler(pin) {
     if (!this.state.pin && typeof(pin) === 'string') {
-      this.setState({pin, pinTitle: 'Confirm Pin'})
+      this.setState({
+        ...this.state,
+        pin,
+        pinTitle: 'Confirm Pin'
+      })
       return
     }
     if (this.state.pin != pin) {
-      this.setState({pin: undefined, pinTitle: 'Enter Pin'})
+      this.setState({
+        ...this.state,
+        pin: undefined,
+        pinTitle: 'Enter Pin'
+      })
       return
     }
     this.storePinCode(pin)
@@ -40,7 +51,7 @@ export default class CreatePinCode extends Component {
         <PinPad
           title={this.state.pinTitle}
           pinLimit={this.state.pinLimit}
-          onEnter={this.onEnterHandler}
+          onEnter={this._onEnterHandler}
         />
       </ViewContainer>
     )

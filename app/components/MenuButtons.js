@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { FlatList } from 'react-native'
-import MenuButton from '../components/MenuButton'
+import MenuButton from './MenuButton'
 
 export default class MenuButtons extends Component {
   render() {

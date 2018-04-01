@@ -1,14 +1,12 @@
 import React, { Component } from 'react'
-import { View, Linking, AsyncStorage } from 'react-native'
+import { View, Linking } from 'react-native'
 import { Actions } from 'react-native-router-flux'
 
-import EscapeViewContainer from '../../components/EscapeViewContainer'
-import MenuButton from '../../components/MenuButton'
+import ViewContainer from '../../components/ViewContainer'
+import MenuButtons from '../../components/MenuButtons'
 import Header from '../../components/Header'
 import InputTextField from '../../components/InputTextField'
 import { default as _ } from 'underscore'
-import HDWalletProvider from 'truffle-hdwallet-provider'
-import Web3 from 'web3'
 
 export default class RegisterInfura extends Component {
   constructor(props) {
@@ -30,10 +28,9 @@ export default class RegisterInfura extends Component {
         autoFocus: false
       }
     }
-    this._validateToken = this._validateToken.bind(this)
   }
   componentDidMount() {
-    this.setState({autoFocus: { ropsten: true }})
+    this.setState({ropsten: {...this.state.ropsten, autoFocus: true}})
   }
   async _storeToken() {
     var tokenPairs = _(this.state).chain().map((domain) => domain.token)
@@ -43,43 +40,62 @@ export default class RegisterInfura extends Component {
       Actions.reset('main')
     }
     catch(err) {
+      this.props.alert(err)
+    }
+  }
+  async _validateToken(domain) {
+    try {
+      var isValid = await this.props.web3.validateInfuraToken(domain, this.state[domain].token)
+      switch (domain) {
+        case 'ropsten': return this.setState({ ropsten: {...this.state.ropsten, valid: isValid} })
+        case 'rinkeby': return this.setState({ rinkeby: {...this.state.rinkeby, valid: isValid} })
+        case 'kovan': return this.setState({ kovan: {...this.state.kovan, valid: isValid} })
+      }
+    }
+    catch(err) {
       console.log(err)
     }
   }
-  async _validateToken() {
-    console.log(this.props.mnemonic)
-    // FfBvZUqHyUR42R1q9CGc
-    this.props.web3.validateInfuraToken() // domain, token
+  async _validateTokens() {
+    // if token valid then store
   }
   render() {
     return(
-      <EscapeViewContainer>
+      <ViewContainer>
         <Header>{'Register Token'}</Header>
         <InputTextField
-          label='Ropsten Network'
+          label={'Ropsten Network'}
+          labelStyle={this.state.ropsten.valid ? 'positive' : 'default'}
           autoFocus={this.state.ropsten.autoFocus}
           placeholder="Enter Ropsten Token"
-          onChangeText={(text) => this.setState({ropsten: {token: text}})}
-          onSubmitEditing={() => {}}
+          onChangeText={(text) => this.setState({ropsten: {...this.state.ropsten, token: text}})}
+          onEndEditing={() => this._validateToken('ropsten')}
         />
         <InputTextField
           label='Rinkeby Network'
+          labelStyle={this.state.rinkeby.valid ? 'positive' : 'default'}
           autoFocus={this.state.rinkeby.autoFocus}
           placeholder="Enter Rinkeby Token"
-          onChangeText={(text) => this.setState({rinkeby: {token: text}})}
-          onSubmitEditing={() => {}}
+          onChangeText={(text) => this.setState({rinkeby: {...this.state.rinkeby, token: text}})}
+          onEndEditing={() => this._validateToken('rinkeby')}
         />
         <InputTextField
           label='Kovan Network'
+          labelStyle={this.state.kovan.valid ? 'positive' : 'default'}
           autoFocus={this.state.kovan.autoFocus}
           placeholder="Enter Kovan Token"
-          onChangeText={(text) => this.setState({kovan: {token: text}})}
+          onChangeText={(text) => this.setState({kovan: {...this.state.kovan, token: text}})}
+          onEndEditing={() => this._validateToken('kovan')}
         />
         <View>
-          <MenuButton title='Register Token' onPressHandler={this._validateToken}/>
-          <MenuButton title='What is Infura ?' onPressHandler={() => Linking.openURL('https://infura.io/')}/>
+          <MenuButtons
+            buttons={[
+              {key: 'Register Token', action: () => this._validateTokens()},
+              {key: 'What is Infura ?', action: () => Linking.openURL('https://infura.io/')}
+            ]}
+          />
         </View>
-      </EscapeViewContainer>
+      </ViewContainer>
     )
   }
 }

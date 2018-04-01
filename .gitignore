@@ -1,7 +1,9 @@
 # OSX
 #
 .DS_Store
-
+.gitignore
+\.expo
+.package-lock.json
 # Xcode
 #
 build/

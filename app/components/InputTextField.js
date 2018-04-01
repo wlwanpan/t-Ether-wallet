@@ -8,30 +8,54 @@ export default class InputTextField extends Component {
     this.state = {
       focus: false
     }
-    this.onSubmitEditingHandler = this.onSubmitEditingHandler.bind(this)
+    this._onSubmitEditingHandler = this._onSubmitEditingHandler.bind(this)
+    this._onEndEditingHandler = this._onEndEditingHandler.bind(this)
+    this._focusTextInput = this._focusTextInput.bind(this)
+    this._onChangeTextHandler = this._onChangeTextHandler.bind(this)
   }
-  onSubmitEditingHandler() {
+  _focusTextInput() {
+    this.setState({ focus: true })
+  }
+  _onChangeTextHandler (text) {
+    if (this.props.onChangeText) {
+      this.props.onChangeText(text)
+    }
+  }
+  _onSubmitEditingHandler(data) {
     if (this.props.onSubmitEditing) {
-      this.props.onSubmitEditing()
+      this.props.onSubmitEditing(data)
+    }
+  }
+  _onEndEditingHandler(data) {
+    if (this.props.onEndEditing) {
+      this.props.onEndEditing(data)
+    }
+  }
+  _labelStyleHandler() {
+    switch (this.props.labelStyle) {
+      case 'default': return styles.labelDefault
+      case 'negative': return styles.labelNegative
+      case 'positive': return styles.labelPositive
     }
   }
   render() {
     return(
       <View style={styles.inputFieldWrapper}>
-        <Text style={styles.labelStyle}>
+        <Text style={[styles.labelStyle, this._labelStyleHandler()]}>
           {this.props.label}
         </Text>
         <TextInput
           style={styles.inputTextStyle}
           autoFocus={this.props.autoFocus || false}
           autoCorrect={false}
-          value={this.props.value || ''}
-          onFocus={() => this.setState({ focus: true })}
+          value={this.props.value || undefined}
           placeholderTextColor='rgba(255,255,255,0.6)'
           underlineColorAndroid={this.state.focus ? '#7289da' : '#99aab5'}
           placeholder={this.props.placeholder}
-          onChangeText={(text) => this.props.onChangeText(text)}
-          onSubmitEditing={this.onSubmitEditingHandler}
+          onChangeText={this._onChangeTextHandler}
+          onFocus={this._focusTextInput}
+          onSubmitEditing={this._onSubmitEditingHandler}
+          onEndEditing={this._onEndEditingHandler}
         />
       </View>
     )
@@ -47,8 +71,16 @@ const styles = StyleSheet.create({
   },
   labelStyle: {
     opacity: 0.9,
-    fontSize: 17,
+    fontSize: 17
+  },
+  labelDefault: {
     color: '#7289da'
+  },
+  labelNegative: {
+    color: 'red'
+  },
+  labelPositive: {
+    color: 'green'
   },
   inputTextStyle: {
     color: 'white',
@@ -64,5 +96,6 @@ InputTextField.propTypes = {
   autoFocus: PropTypes.bool,
   textRange: PropTypes.array,
   onChangeText: PropTypes.func,
-  onSubmitEditing: PropTypes.func
+  onSubmitEditing: PropTypes.func,
+  onEndEditing: PropTypes.func
 }

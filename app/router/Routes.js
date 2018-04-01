@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
-import { AsyncStorage } from 'react-native'
+import { Alert } from 'react-native'
 import { Actions, Router, Scene, Tabs } from 'react-native-router-flux'
 import NativeWeb3 from '../lib/NativeWeb3'
+import { Constants } from 'expo'
 
 import EntryMenu from '../screens/EntryMenu'
 import ErrorScreen from '../screens/ErrorScreen'
@@ -18,16 +19,12 @@ export default class Routes extends Component {
     this.state = {
       web3: new NativeWeb3()
     }
+    this.alert = this.alert.bind(this)
   }
-  componentDidMount() {
-    this._loadLocalStorage()
-  }
-  async _loadLocalStorage() {
+  async componentDidMount() {
     try {
-      // const pinCodeHash = await AsyncStorage.getItem('@tEtherWallet:securityPinCodeHash')
-      // const keys = await AsyncStorage.getAllKeys()
-
-      // Check if Pin Saved
+      const storedPinHash = await this.state.web3.aLoadPinHash()
+      console.log(storedPinHash)
       if (false) {
         Actions.main()
       } else {
@@ -35,19 +32,26 @@ export default class Routes extends Component {
       }
     }
     catch(err) {
-      console.log(err)
+      this.alert(err)
     }
+  }
+  alert(err) {
+    Alert.alert(
+      'Oupsy Error', err,
+      [{text: 'Cancel', onPress: () => console.log('cancel dialog'), style: 'cancel'},],
+      { cancelable: false }
+    )
   }
   render() {
     return (
       <Router
-        navigationBarStyle={{ backgroundColor: '#23272a' }}
+        navigationBarStyle={{ backgroundColor: '#23272a', marginTop: Constants.statusBarHeight }}
         titleStyle={{ color: '#7289da' }}
         navBarButtonColor='white'
         swipeEnabled={true}
         >
-        <Scene>
-          <Tabs key='root' hideTabBar={true} web3={this.state.web3}>
+        <Scene web3={this.state.web3} alert={this.alert}>
+          <Tabs key='root' hideTabBar={true}>
             <Scene key='gettingStarted' title='Wallet' component={EntryMenu} initial={true} />
             <Scene key='createPinCode' title='Enter Pin' component={CreatePinCode} />
             <Scene key='createMnemonic' title='Create Wallet' component={CreateMnemonic} />
